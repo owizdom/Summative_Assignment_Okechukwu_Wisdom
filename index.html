@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book & Notes Vault</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <h1>📚 Book & Notes Vault</h1>
+            </div>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#dashboard" class="nav-link">Dashboard</a></li>
+                <li><a href="#records" class="nav-link">Records</a></li>
+                <li><a href="#add-form" class="nav-link">Add Book</a></li>
+                <li><a href="#notes" class="nav-link">Notes</a></li>
+                <li><a href="#settings" class="nav-link">Settings</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main">
+        <!-- About Section -->
+        <section id="about" class="section active">
+            <div class="container">
+                <h2>About Book & Notes Vault</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>Welcome to Book & Notes Vault, your personal digital library management system. This application helps you catalog, organize, and search through your book collection and reading notes.</p>
+                        <h3>Features:</h3>
+                        <ul>
+                            <li>📖 Catalog your book collection</li>
+                            <li>📝 Add and manage reading notes</li>
+                            <li>🏷️ Tag books for easy organization</li>
+                            <li>🔍 Search through your collection</li>
+                            <li>📊 View reading statistics</li>
+                            <li>📱 Mobile-responsive design</li>
+                        </ul>
+                    </div>
+                    <div class="contact-info">
+                        <h3>Contact</h3>
+                        <p>GitHub: <a href="https://github.com/yourusername" target="_blank">github.com/yourusername</a></p>
+                        <p>Email: <a href="mailto:your.email@example.com">your.email@example.com</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section">
+            <div class="container">
+                <h2>Dashboard</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Books</h3>
+                        <div class="stat-number" id="total-books">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Books Read</h3>
+                        <div class="stat-number" id="books-read">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Currently Reading</h3>
+                        <div class="stat-number" id="currently-reading">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Notes</h3>
+                        <div class="stat-number" id="total-notes">0</div>
+                    </div>
+                </div>
+                <div class="recent-activity">
+                    <h3>Recent Activity</h3>
+                    <div id="recent-activity-list" class="activity-list">
+                        <p class="no-activity">No recent activity</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Records Section -->
+        <section id="records" class="section">
+            <div class="container">
+                <div class="records-header">
+                    <h2>Your Library</h2>
+                    <div class="search-container">
+                        <input type="text" id="search-input" placeholder="Search books, authors, or tags..." class="search-input">
+                        <button id="search-btn" class="search-btn">🔍</button>
+                    </div>
+                </div>
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">All</button>
+                    <button class="filter-tab" data-filter="read">Read</button>
+                    <button class="filter-tab" data-filter="reading">Currently Reading</button>
+                    <button class="filter-tab" data-filter="to-read">To Read</button>
+                </div>
+                <div id="records-container" class="records-container">
+                    <div class="no-books">
+                        <p>No books in your library yet. <a href="#add-form">Add your first book!</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add/Edit Form Section -->
+        <section id="add-form" class="section">
+            <div class="container">
+                <h2 id="form-title">Add New Book</h2>
+                <form id="book-form" class="book-form">
+                    <div class="form-group">
+                        <label for="title">Title *</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="author">Author *</label>
+                        <input type="text" id="author" name="author" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="isbn">ISBN</label>
+                        <input type="text" id="isbn" name="isbn" pattern="[0-9-]{10,17}">
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status *</label>
+                        <select id="status" name="status" required>
+                            <option value="">Select status</option>
+                            <option value="to-read">To Read</option>
+                            <option value="reading">Currently Reading</option>
+                            <option value="read">Read</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="rating">Rating</label>
+                        <select id="rating" name="rating">
+                            <option value="">No rating</option>
+                            <option value="1">⭐ (1)</option>
+                            <option value="2">⭐⭐ (2)</option>
+                            <option value="3">⭐⭐⭐ (3)</option>
+                            <option value="4">⭐⭐⭐⭐ (4)</option>
+                            <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tags">Tags (comma-separated)</label>
+                        <input type="text" id="tags" name="tags" placeholder="fiction, mystery, 2024">
+                    </div>
+                    <div class="form-group">
+                        <label for="pdf-file">PDF File</label>
+                        <input type="file" id="pdf-file" name="pdfFile" accept=".pdf" class="file-input">
+                        <small class="file-help">Upload the PDF version of this book for in-app reading</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">Notes</label>
+                        <textarea id="notes" name="notes" rows="4" placeholder="Your thoughts about this book..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Book</button>
+                        <button type="button" id="cancel-btn" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Reading Section -->
+        <section id="reading" class="section">
+            <div class="reading-container">
+                <div class="reading-header">
+                    <button id="close-reader" class="btn btn-secondary">← Back to Library</button>
+                    <div class="reading-info">
+                        <h2 id="reading-title">Book Title</h2>
+                        <p id="reading-author">by Author Name</p>
+                        <div class="reading-stats">
+                            <span id="reading-time">Reading time: 0h 0m</span>
+                            <span id="reading-progress">Progress: 0%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="book-reader-container">
+                    <div id="book-content" class="book-content-display">
+                        <!-- HTML content will be loaded here -->
+                    </div>
+                </div>
+                <div class="reading-notes">
+                    <h3>Reading Notes</h3>
+                    <textarea id="reading-notes" placeholder="Take notes while reading..."></textarea>
+                    <button id="save-reading-notes" class="btn btn-primary">Save Notes</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notes Section -->
+        <section id="notes" class="section">
+            <div class="container">
+                <h2>Reading Notes</h2>
+                <div class="notes-header">
+                    <div class="notes-filter">
+                        <label for="notes-book-filter">Filter by Book:</label>
+                        <select id="notes-book-filter">
+                            <option value="">All Books with Notes</option>
+                        </select>
+                    </div>
+                    <div class="notes-stats">
+                        <span id="total-notes-count">0 notes</span>
+                    </div>
+                </div>
+                <div id="notes-container" class="notes-container">
+                    <div class="no-notes">
+                        <p>No notes yet. Start reading a book to take notes!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="section">
+            <div class="container">
+                <h2>Settings</h2>
+                <div class="settings-content">
+                    <div class="setting-group">
+                        <h3>Data Management</h3>
+                        <div class="setting-item">
+                            <label for="export-data">Export Library Data</label>
+                            <button id="export-btn" class="btn btn-secondary">Export JSON</button>
+                        </div>
+                        <div class="setting-item">
+                            <label for="import-data">Import Library Data</label>
+                            <input type="file" id="import-input" accept=".json" class="file-input">
+                            <button id="import-btn" class="btn btn-secondary">Import</button>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <h3>Display Preferences</h3>
+                        <div class="setting-item">
+                            <label for="theme">Theme</label>
+                            <select id="theme-select">
+                                <option value="light">Light</option>
+                                <option value="dark">Dark</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label for="items-per-page">Items per page</label>
+                            <select id="items-per-page">
+                                <option value="10">10</option>
+                                <option value="20" selected>20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <h3>Library Statistics</h3>
+                        <div class="stats-summary">
+                            <p>Total books: <span id="settings-total-books">0</span></p>
+                            <p>Books read: <span id="settings-books-read">0</span></p>
+                            <p>Currently reading: <span id="settings-currently-reading">0</span></p>
+                            <p>To read: <span id="settings-to-read">0</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 Book & Notes Vault. Built with vanilla HTML, CSS, and JavaScript.</p>
+    </footer>
+
+    <!-- PDF.js for PDF rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
