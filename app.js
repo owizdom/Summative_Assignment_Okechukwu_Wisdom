@@ -269,23 +269,13 @@ class BookVault {
     // Dashboard
     updateDashboard() {
         const totalBooks = this.books.length;
-        const booksRead = this.books.filter(book => book.status === 'read').length;
-        const currentlyReading = this.books.filter(book => book.status === 'reading').length;
         const totalNotes = this.books.reduce((sum, book) => sum + (book.notes ? 1 : 0), 0);
-        
-        // Calculate sum of pages
-        const sumPages = this.books.reduce((sum, book) => {
-            return sum + (book.contentData ? book.contentData.sections.length : 0);
-        }, 0);
         
         // Calculate top tag
         const topTag = this.getTopTag();
 
         document.getElementById('total-books').textContent = totalBooks;
-        document.getElementById('books-read').textContent = booksRead;
-        document.getElementById('currently-reading').textContent = currentlyReading;
         document.getElementById('total-notes').textContent = totalNotes;
-        document.getElementById('sum-pages').textContent = sumPages;
         document.getElementById('top-tag').textContent = topTag;
 
         this.updateRecentActivity();
@@ -629,13 +619,9 @@ class BookVault {
     // Settings
     updateSettingsStats() {
         const totalBooks = this.books.length;
-        const booksRead = this.books.filter(book => book.status === 'read').length;
-        const currentlyReading = this.books.filter(book => book.status === 'reading').length;
         const toRead = this.books.filter(book => book.status === 'to-read').length;
 
         document.getElementById('settings-total-books').textContent = totalBooks;
-        document.getElementById('settings-books-read').textContent = booksRead;
-        document.getElementById('settings-currently-reading').textContent = currentlyReading;
         document.getElementById('settings-to-read').textContent = toRead;
     }
 

@@ -1,0 +1,130 @@
+{
+  "books": [
+    {
+      "id": "1760348646901",
+      "title": "AlineInMyDreams",
+      "author": "wisdom",
+      "isbn": "978-0-316-76901-6",
+      "status": "to-read",
+      "rating": "",
+      "tags": ["kigaliNights"],
+      "notes": "",
+      "createdAt": "2025-10-13T09:41:01.914Z",
+      "updatedAt": "2025-10-13T09:41:01.914Z"
+    },
+    {
+      "id": "1760348646902",
+      "title": "SandrineAndTheSunsetCafe",
+      "author": "wisdom",
+      "isbn": "978-0-316-76902-3",
+      "status": "to-read",
+      "rating": "",
+      "tags": ["nyamiramboLove"],
+      "notes": "",
+      "createdAt": "2025-10-13T09:42:11.914Z",
+      "updatedAt": "2025-10-13T09:42:11.914Z"
+    },
+    {
+      "id": "1760348646903",
+      "title": "DivineWritesMyName",
+      "author": "wisdom",
+      "isbn": "978-0-316-76903-0",
+      "status": "to-read",
+      "rating": "",
+      "tags": ["lettersOfLove"],
+      "notes": "",
+      "createdAt": "2025-10-13T09:43:21.914Z",
+      "updatedAt": "2025-10-13T09:43:21.914Z"
+    },
+    {
+      "id": "1760348646904",
+      "title": "KezaFromTheMountains",
+      "author": "wisdom",
+      "isbn": "978-0-316-76904-7",
+      "status": "to-read",
+      "rating": "",
+      "tags": ["rwandaHearts"],
+      "notes": "",
+      "createdAt": "2025-10-13T09:44:31.914Z",
+      "updatedAt": "2025-10-13T09:44:31.914Z"
+    },
+    {
+      "id": "1760348646905",
+      "title": "BellaUnderThePalmTrees",
+      "author": "wisdom",
+      "isbn": "978-0-316-76905-4",
+      "status": "to-read",
+      "rating": "",
+      "tags": ["lakeKivuWhispers"],
+      "notes": "",
+      "createdAt": "2025-10-13T09:45:41.914Z",
+      "updatedAt": "2025-10-13T09:45:41.914Z"
+    },
+    {
+      "id": "1760348646906",
+      "title": "AnithaAndTheStarlitRoad",
+      "author": "wisdom",
+      "isbn": "978-0-316-76906-1",
+      "status": "to-read",
+      "rating": "",
+      "tags": ["nightDrives"],
+      "notes": "",
+      "createdAt": "2025-10-13T09:46:51.914Z",
+      "updatedAt": "2025-10-13T09:46:51.914Z"
+    },
+    {
+      "id": "1760348646907",
+      "title": "DianeSingsForWisdom",
+      "author": "wisdom",
+      "isbn": "978-0-316-76907-8",
+      "status": "to-read",
+      "rating": "",
+      "tags": ["melodyOfHearts"],
+      "notes": "",
+      "createdAt": "2025-10-13T09:47:59.914Z",
+      "updatedAt": "2025-10-13T09:47:59.914Z"
+    },
+    {
+      "id": "1760348646908",
+      "title": "ImmaculeeOfTheHills",
+      "author": "wisdom",
+      "isbn": "978-0-316-76908-5",
+      "status": "to-read",
+      "rating": "",
+      "tags": ["mistyMornings"],
+      "notes": "",
+      "createdAt": "2025-10-13T09:48:59.914Z",
+      "updatedAt": "2025-10-13T09:48:59.914Z"
+    },
+    {
+      "id": "1760348646909",
+      "title": "NaimaThePoet",
+      "author": "wisdom",
+      "isbn": "978-0-316-76909-2",
+      "status": "to-read",
+      "rating": "",
+      "tags": ["versesOfLove"],
+      "notes": "",
+      "createdAt": "2025-10-13T09:49:59.914Z",
+      "updatedAt": "2025-10-13T09:49:59.914Z"
+    },
+    {
+      "id": "1760348646910",
+      "title": "KeiraPleaseLoveMe",
+      "author": "wisdom",
+      "isbn": "978-0-316-76910-8",
+      "status": "to-read",
+      "rating": "",
+      "tags": ["loveIsBeautiful"],
+      "notes": "",
+      "createdAt": "2025-10-13T09:50:59.914Z",
+      "updatedAt": "2025-10-13T09:50:59.914Z"
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "createdAt": "2025-10-13T09:51:16.954Z",
+    "lastModified": "2025-10-13T09:51:16.954Z",
+    "totalBooks": 10
+  }
+}
