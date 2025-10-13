@@ -10,7 +10,7 @@
     <header class="header">
         <nav class="nav">
             <div class="nav-brand">
-                <h1>📚 Book & Notes Vault</h1>
+                <h1>Book & Notes Vault</h1>
             </div>
             <button class="nav-toggle" aria-label="Toggle navigation">
                 <span></span>
@@ -22,7 +22,6 @@
                 <li><a href="#dashboard" class="nav-link">Dashboard</a></li>
                 <li><a href="#records" class="nav-link">Records</a></li>
                 <li><a href="#add-form" class="nav-link">Add Book</a></li>
-                <li><a href="#notes" class="nav-link">Notes</a></li>
                 <li><a href="#settings" class="nav-link">Settings</a></li>
             </ul>
         </nav>
@@ -38,12 +37,12 @@
                         <p>Welcome to Book & Notes Vault, your personal digital library management system. This application helps you catalog, organize, and search through your book collection and reading notes.</p>
                         <h3>Features:</h3>
                         <ul>
-                            <li>📖 Catalog your book collection</li>
-                            <li>📝 Add and manage reading notes</li>
-                            <li>🏷️ Tag books for easy organization</li>
-                            <li>🔍 Search through your collection</li>
-                            <li>📊 View reading statistics</li>
-                            <li>📱 Mobile-responsive design</li>
+                            <li>Catalog your book collection</li>
+                            <li>Add and manage reading notes</li>
+                            <li>Tag books for easy organization</li>
+                            <li>Search through your collection</li>
+                            <li>View reading statistics</li>
+                            <li>Mobile-responsive design</li>
                         </ul>
                     </div>
                     <div class="contact-info">
@@ -76,7 +75,34 @@
                         <h3>Total Notes</h3>
                         <div class="stat-number" id="total-notes">0</div>
                     </div>
+                    <div class="stat-card">
+                        <h3>Sum of Pages</h3>
+                        <div class="stat-number" id="sum-pages">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Top Tag</h3>
+                        <div class="stat-number" id="top-tag">None</div>
+                    </div>
                 </div>
+                
+                <div class="trend-chart">
+                    <h3>Last 7 Days - Book Additions</h3>
+                    <div class="chart-container">
+                        <div class="chart-bars" id="trend-chart-bars">
+                            <!-- Chart bars will be generated here -->
+                        </div>
+                        <div class="chart-labels">
+                            <span>7 days ago</span>
+                            <span>6 days ago</span>
+                            <span>5 days ago</span>
+                            <span>4 days ago</span>
+                            <span>3 days ago</span>
+                            <span>2 days ago</span>
+                            <span>Today</span>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="recent-activity">
                     <h3>Recent Activity</h3>
                     <div id="recent-activity-list" class="activity-list">
@@ -93,7 +119,7 @@
                     <h2>Your Library</h2>
                     <div class="search-container">
                         <input type="text" id="search-input" placeholder="Search books, authors, or tags..." class="search-input">
-                        <button id="search-btn" class="search-btn">🔍</button>
+                        <button id="search-btn" class="search-btn">Search</button>
                     </div>
                 </div>
                 <div class="filter-tabs">
@@ -140,22 +166,18 @@
                         <label for="rating">Rating</label>
                         <select id="rating" name="rating">
                             <option value="">No rating</option>
-                            <option value="1">⭐ (1)</option>
-                            <option value="2">⭐⭐ (2)</option>
-                            <option value="3">⭐⭐⭐ (3)</option>
-                            <option value="4">⭐⭐⭐⭐ (4)</option>
-                            <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                            <option value="1">1 Star</option>
+                            <option value="2">2 Stars</option>
+                            <option value="3">3 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="5">5 Stars</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="tags">Tags (comma-separated)</label>
                         <input type="text" id="tags" name="tags" placeholder="fiction, mystery, 2024">
                     </div>
-                    <div class="form-group">
-                        <label for="pdf-file">PDF File</label>
-                        <input type="file" id="pdf-file" name="pdfFile" accept=".pdf" class="file-input">
-                        <small class="file-help">Upload the PDF version of this book for in-app reading</small>
-                    </div>
+                   
                     <div class="form-group">
                         <label for="notes">Notes</label>
                         <textarea id="notes" name="notes" rows="4" placeholder="Your thoughts about this book..."></textarea>
@@ -176,21 +198,12 @@
                     <div class="reading-info">
                         <h2 id="reading-title">Book Title</h2>
                         <p id="reading-author">by Author Name</p>
-                        <div class="reading-stats">
-                            <span id="reading-time">Reading time: 0h 0m</span>
-                            <span id="reading-progress">Progress: 0%</span>
-                        </div>
                     </div>
                 </div>
                 <div class="book-reader-container">
                     <div id="book-content" class="book-content-display">
                         <!-- HTML content will be loaded here -->
                     </div>
-                </div>
-                <div class="reading-notes">
-                    <h3>Reading Notes</h3>
-                    <textarea id="reading-notes" placeholder="Take notes while reading..."></textarea>
-                    <button id="save-reading-notes" class="btn btn-primary">Save Notes</button>
                 </div>
             </div>
         </section>
@@ -230,6 +243,10 @@
                             <button id="export-btn" class="btn btn-secondary">Export JSON</button>
                         </div>
                         <div class="setting-item">
+                            <label for="view-json">View JSON Data</label>
+                            <button id="view-json-btn" class="btn btn-secondary">View JSON</button>
+                        </div>
+                        <div class="setting-item">
                             <label for="import-data">Import Library Data</label>
                             <input type="file" id="import-input" accept=".json" class="file-input">
                             <button id="import-btn" class="btn btn-secondary">Import</button>
@@ -252,6 +269,7 @@
                                 <option value="50">50</option>
                             </select>
                         </div>
+                        
                     </div>
                     <div class="setting-group">
                         <h3>Library Statistics</h3>
@@ -271,8 +289,6 @@
         <p>&copy; 2024 Book & Notes Vault. Built with vanilla HTML, CSS, and JavaScript.</p>
     </footer>
 
-    <!-- PDF.js for PDF rendering -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

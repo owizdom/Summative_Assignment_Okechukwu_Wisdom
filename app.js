@@ -4,12 +4,6 @@ class BookVault {
         this.books = this.loadBooks();
         this.currentFilter = 'all';
         this.editingBookId = null;
-        this.currentReadingBook = null;
-        this.readingStartTime = null;
-        this.readingInterval = null;
-        this.pdfDoc = null;
-        this.currentPage = 1;
-        this.totalPages = 0;
         this.init();
     }
 
@@ -28,6 +22,114 @@ class BookVault {
 
     saveBooks() {
         localStorage.setItem('bookVault_books', JSON.stringify(this.books));
+    }
+
+    // JSON File Management
+    exportToJSONFile() {
+        // Extract only the required fields from each book
+        const simplifiedBooks = this.books.map(book => ({
+            id: book.id,
+            title: book.title,
+            author: book.author,
+            isbn: book.isbn || '',
+            pages: book.contentData ? book.contentData.sections.length : 0,
+            tag: book.tags ? book.tags.join(', ') : '',
+            dateAdded: book.createdAt
+        }));
+
+        const data = {
+            books: simplifiedBooks,
+            metadata: {
+                version: "1.0",
+                createdAt: new Date().toISOString(),
+                lastModified: new Date().toISOString(),
+                totalBooks: this.books.length
+            }
+        };
+
+        const jsonString = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        // Create a temporary download link
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'books-data.json';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    importFromJSONFile(file) {
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                
+                if (data.books && Array.isArray(data.books)) {
+                    if (confirm('This will replace all your current books. Are you sure?')) {
+                        this.books = data.books;
+                        this.saveBooks();
+                        this.updateDashboard();
+                        this.renderBooks();
+                        alert('Books imported successfully from JSON file!');
+                    }
+                } else {
+                    alert('Invalid JSON file format.');
+                }
+            } catch (error) {
+                alert('Error reading JSON file. Please make sure it\'s a valid JSON file.');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    viewJSONData() {
+        // Extract only the required fields from each book
+        const simplifiedBooks = this.books.map(book => ({
+            id: book.id,
+            title: book.title,
+            author: book.author,
+            isbn: book.isbn || '',
+            pages: book.contentData ? book.contentData.sections.length : 0,
+            tag: book.tags ? book.tags.join(', ') : '',
+            dateAdded: book.createdAt
+        }));
+
+        const data = {
+            books: simplifiedBooks,
+            metadata: {
+                version: "1.0",
+                createdAt: new Date().toISOString(),
+                lastModified: new Date().toISOString(),
+                totalBooks: this.books.length
+            }
+        };
+
+        const jsonString = JSON.stringify(data, null, 2);
+        
+        // Open in new window for easy viewing
+        const newWindow = window.open('', '_blank');
+        newWindow.document.write(`
+            <html>
+                <head>
+                    <title>Books Data - JSON View</title>
+                    <style>
+                        body { font-family: monospace; margin: 20px; background: #f5f5f5; }
+                        pre { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+                        h1 { color: #333; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Books Data - JSON Format</h1>
+                    <pre>${jsonString}</pre>
+                </body>
+            </html>
+        `);
     }
 
     loadSettings() {
@@ -101,7 +203,11 @@ class BookVault {
         });
 
         document.getElementById('export-btn').addEventListener('click', () => {
-            this.exportData();
+            this.exportToJSONFile();
+        });
+
+        document.getElementById('view-json-btn').addEventListener('click', () => {
+            this.viewJSONData();
         });
 
         document.getElementById('import-btn').addEventListener('click', () => {
@@ -109,23 +215,20 @@ class BookVault {
         });
 
         document.getElementById('import-input').addEventListener('change', (e) => {
-            this.importData(e.target.files[0]);
+            this.importFromJSONFile(e.target.files[0]);
         });
 
         // Reading functionality
         document.getElementById('close-reader').addEventListener('click', () => {
-            this.stopReading();
             this.showSection('records');
         });
 
-        document.getElementById('save-reading-notes').addEventListener('click', () => {
-            this.saveReadingNotes();
-        });
 
         // Notes section
         document.getElementById('notes-book-filter').addEventListener('change', (e) => {
             this.filterNotes(e.target.value);
         });
+
     }
 
     // Navigation
@@ -169,13 +272,24 @@ class BookVault {
         const booksRead = this.books.filter(book => book.status === 'read').length;
         const currentlyReading = this.books.filter(book => book.status === 'reading').length;
         const totalNotes = this.books.reduce((sum, book) => sum + (book.notes ? 1 : 0), 0);
+        
+        // Calculate sum of pages
+        const sumPages = this.books.reduce((sum, book) => {
+            return sum + (book.contentData ? book.contentData.sections.length : 0);
+        }, 0);
+        
+        // Calculate top tag
+        const topTag = this.getTopTag();
 
         document.getElementById('total-books').textContent = totalBooks;
         document.getElementById('books-read').textContent = booksRead;
         document.getElementById('currently-reading').textContent = currentlyReading;
         document.getElementById('total-notes').textContent = totalNotes;
+        document.getElementById('sum-pages').textContent = sumPages;
+        document.getElementById('top-tag').textContent = topTag;
 
         this.updateRecentActivity();
+        this.updateTrendChart();
     }
 
     updateRecentActivity() {
@@ -197,6 +311,80 @@ class BookVault {
             </div>
         `).join('');
     }
+
+    updateTrendChart() {
+        const chartContainer = document.getElementById('trend-chart-bars');
+        if (!chartContainer) return;
+
+        // Calculate books added in the last 7 days
+        const last7Days = this.getLast7DaysData();
+        
+        // Find the maximum value for scaling
+        const maxValue = Math.max(...last7Days.map(day => day.count), 1);
+        
+        // Generate chart bars
+        chartContainer.innerHTML = last7Days.map((day, index) => {
+            const height = (day.count / maxValue) * 100; // Percentage height
+            const barHeight = Math.max(height, 2); // Minimum 2% height for visibility
+            
+            return `
+                <div class="chart-bar" style="height: ${barHeight}%" title="${day.date}: ${day.count} books">
+                    ${day.count > 0 ? `<div class="chart-bar-value">${day.count}</div>` : ''}
+                </div>
+            `;
+        }).join('');
+    }
+
+    getLast7DaysData() {
+        const today = new Date();
+        const last7Days = [];
+        
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            date.setHours(0, 0, 0, 0); // Start of day
+            
+            const nextDate = new Date(date);
+            nextDate.setDate(nextDate.getDate() + 1);
+            
+            // Count books added on this day
+            const booksAddedToday = this.books.filter(book => {
+                const bookDate = new Date(book.createdAt);
+                bookDate.setHours(0, 0, 0, 0);
+                return bookDate.getTime() === date.getTime();
+            }).length;
+            
+            last7Days.push({
+                date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                count: booksAddedToday
+            });
+        }
+        
+        return last7Days;
+    }
+
+    getTopTag() {
+        const tagCounts = {};
+        
+        this.books.forEach(book => {
+            if (book.tags && book.tags.length > 0) {
+                book.tags.forEach(tag => {
+                    tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                });
+            }
+        });
+        
+        if (Object.keys(tagCounts).length === 0) {
+            return 'None';
+        }
+        
+        const topTag = Object.keys(tagCounts).reduce((a, b) => 
+            tagCounts[a] > tagCounts[b] ? a : b
+        );
+        
+        return `${topTag} (${tagCounts[topTag]})`;
+    }
+
 
     // Book Management
     addBook(bookData) {
@@ -270,16 +458,10 @@ class BookVault {
             return;
         }
 
-        // Handle PDF file upload
-        const pdfFile = document.getElementById('pdf-file').files[0];
-        if (pdfFile) {
-            this.handlePDFUpload(pdfFile, bookData);
+        if (this.editingBookId) {
+            this.updateBook(this.editingBookId, bookData);
         } else {
-            if (this.editingBookId) {
-                this.updateBook(this.editingBookId, bookData);
-            } else {
-                this.addBook(bookData);
-            }
+            this.addBook(bookData);
         }
     }
 
@@ -295,6 +477,9 @@ class BookVault {
                 if (element) {
                     if (key === 'tags') {
                         element.value = book[key].join(', ');
+                    } else if (key === 'contentData') {
+                        // Skip contentData as there's no form field for it
+                        return;
                     } else {
                         element.value = book[key];
                     }
@@ -304,6 +489,7 @@ class BookVault {
             this.showSection('add-form');
         }
     }
+
 
     resetForm() {
         this.editingBookId = null;
@@ -369,7 +555,7 @@ class BookVault {
 
     createBookCard(book) {
         const statusText = this.getStatusText(book.status);
-        const ratingStars = book.rating ? '⭐'.repeat(book.rating) : '';
+        const ratingStars = book.rating ? '★'.repeat(book.rating) : '';
         const tagsHtml = book.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
 
         return `
@@ -380,20 +566,14 @@ class BookVault {
                 ${book.rating ? `<div class="rating">${ratingStars}</div>` : ''}
                 ${book.tags.length > 0 ? `<div class="tags">${tagsHtml}</div>` : ''}
                 ${book.notes ? `<div class="notes">${this.escapeHtml(book.notes)}</div>` : ''}
-                <div class="book-stats">
-                    <div class="reading-time">📖 ${book.readingTime || '0h 0m'}</div>
-                    <div class="book-status-indicator">
-                        ${book.pdfFile ? '📄 PDF Available' : '📚 No PDF'}
-                    </div>
-                </div>
                 <div class="book-actions">
-                    ${book.pdfFile ? `<button class="btn btn-primary btn-small" onclick="app.readBook('${book.id}')">Read</button>` : ''}
                     <button class="btn btn-secondary btn-small" onclick="app.editBook('${book.id}')">Edit</button>
                     <button class="btn btn-danger btn-small" onclick="app.deleteBook('${book.id}')">Delete</button>
                 </div>
             </div>
         `;
     }
+
 
     // Utility Functions
     getStatusText(status) {
@@ -445,207 +625,6 @@ class BookVault {
         });
     }
 
-    // PDF functionality
-    handlePDFUpload(pdfFile, bookData) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            // Store both PDF data and convert to HTML
-            bookData.pdfFile = {
-                name: pdfFile.name,
-                data: e.target.result,
-                size: pdfFile.size,
-                type: pdfFile.type
-            };
-            bookData.readingTime = '0h 0m';
-            bookData.readingSessions = [];
-            bookData.notes = bookData.notes || '';
-
-            // Convert PDF to HTML content
-            this.convertPDFToHTML(e.target.result, bookData);
-        };
-        reader.readAsDataURL(pdfFile);
-    }
-
-    convertPDFToHTML(pdfData, bookData) {
-        // Convert base64 to Uint8Array
-        const binaryString = atob(pdfData.split(',')[1]);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-        }
-
-        // Show loading state immediately - TEMPORARY STATE FUNCTION
-        this.showPDFProcessingState(bookData);
-
-        // Load PDF and extract text
-        pdfjsLib.getDocument({ data: bytes }).promise.then((pdf) => {
-            this.extractTextFromPDF(pdf, bookData);
-        }).catch((error) => {
-            console.error('Error loading PDF:', error);
-            // Fallback: create a simple HTML version
-            bookData.htmlContent = this.createFallbackHTML(bookData.title, bookData.author);
-            this.displayHTMLContent(bookData.htmlContent);
-            this.finalizeBookUpload(bookData);
-        });
-    }
-
-    showPDFProcessingState(bookData) {
-        // TEMPORARY STATE FUNCTION - Shows immediate feedback
-        console.log('📖 Starting PDF processing for:', bookData.title);
-        
-        // Create a temporary state to show processing
-        const tempState = {
-            title: bookData.title,
-            author: bookData.author,
-            isProcessing: true
-        };
-        
-        // Show processing state in the reading interface IMMEDIATELY
-        const contentContainer = document.getElementById('book-content');
-        if (contentContainer) {
-            contentContainer.innerHTML = `
-                <div class="book-content">
-                    <h1 class="book-title">${this.escapeHtml(tempState.title)}</h1>
-                    <h2 class="book-author">by ${this.escapeHtml(tempState.author)}</h2>
-                    <div class="processing-content">
-                        <div class="loading-message">
-                            <h3>📖 Extracting text from PDF...</h3>
-                            <p>Converting your PDF to readable HTML format</p>
-                            <div class="loading-spinner">⏳</div>
-                            <div class="progress-bar">
-                                <div class="progress-fill"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            console.log('✅ Temporary state displayed');
-        } else {
-            console.error('❌ Book content container not found');
-        }
-    }
-
-    extractTextFromPDF(pdf, bookData) {
-        const totalPages = pdf.numPages;
-        let allText = '';
-        let processedPages = 0;
-
-        console.log(`📄 PDF has ${totalPages} pages, starting extraction...`);
-
-        // Show progress immediately
-        this.updateProcessingProgress(0, totalPages, bookData);
-
-        // Extract text from all pages
-        for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-            pdf.getPage(pageNum).then((page) => {
-                page.getTextContent().then((textContent) => {
-                    const pageText = textContent.items.map(item => item.str).join(' ');
-                    allText += pageText + '\n\n';
-                    processedPages++;
-
-                    console.log(`📖 Processed page ${processedPages}/${totalPages}`);
-
-                    // Update progress
-                    this.updateProcessingProgress(processedPages, totalPages, bookData);
-
-                    // When all pages are processed, create HTML and display immediately
-                    if (processedPages === totalPages) {
-                        console.log('✅ All pages processed, creating HTML...');
-                        bookData.htmlContent = this.createHTMLFromText(allText, bookData.title, bookData.author);
-                        this.displayHTMLContent(bookData.htmlContent);
-                        this.finalizeBookUpload(bookData);
-                        console.log('🎉 HTML content displayed!');
-                    }
-                });
-            });
-        }
-    }
-
-    updateProcessingProgress(current, total, bookData) {
-        const percentage = Math.round((current / total) * 100);
-        const progressBar = document.querySelector('.progress-fill');
-        const progressText = document.querySelector('.loading-message p');
-        
-        if (progressBar) {
-            progressBar.style.width = `${percentage}%`;
-        }
-        
-        if (progressText) {
-            progressText.textContent = `Processing page ${current} of ${total} (${percentage}%)`;
-        }
-    }
-
-    displayHTMLContent(htmlContent) {
-        // IMMEDIATELY display the HTML content - TEMPORARY STATE FUNCTION
-        console.log('🔄 Displaying HTML content...');
-        const contentContainer = document.getElementById('book-content');
-        if (contentContainer) {
-            contentContainer.innerHTML = htmlContent;
-            console.log('✅ HTML content displayed successfully!');
-        } else {
-            console.error('❌ Could not find book-content container');
-        }
-    }
-
-    createHTMLFromText(text, title, author) {
-        // Clean up the text
-        const cleanText = text.replace(/\s+/g, ' ').trim();
-        
-        // Split into paragraphs (rough heuristic)
-        const paragraphs = cleanText.split(/(?<=[.!?])\s+(?=[A-Z])/);
-        
-        let html = `
-            <div class="book-content">
-                <h1 class="book-title">${this.escapeHtml(title)}</h1>
-                <h2 class="book-author">by ${this.escapeHtml(author)}</h2>
-                <div class="book-text">
-        `;
-
-        paragraphs.forEach(paragraph => {
-            if (paragraph.trim().length > 10) { // Only include substantial paragraphs
-                html += `<p class="book-paragraph">${this.escapeHtml(paragraph.trim())}</p>\n`;
-            }
-        });
-
-        html += `
-                </div>
-            </div>
-        `;
-
-        return html;
-    }
-
-    createFallbackHTML(title, author) {
-        return `
-            <div class="book-content">
-                <h1 class="book-title">${this.escapeHtml(title)}</h1>
-                <h2 class="book-author">by ${this.escapeHtml(author)}</h2>
-                <div class="book-text">
-                    <p class="book-paragraph">PDF content is being processed. Please try refreshing the page or re-uploading the PDF.</p>
-                </div>
-            </div>
-        `;
-    }
-
-    finalizeBookUpload(bookData) {
-        if (this.editingBookId) {
-            this.updateBook(this.editingBookId, bookData);
-        } else {
-            this.addBook(bookData);
-        }
-        
-        // If we're currently reading this book, refresh the content
-        if (this.currentReadingBook && this.currentReadingBook.id === bookData.id) {
-            this.loadHTMLContent(bookData);
-        }
-        
-        // If this is a new book with PDF, automatically switch to reading view
-        if (!this.editingBookId && bookData.pdfFile) {
-            setTimeout(() => {
-                this.readBook(bookData.id);
-            }, 500); // Small delay to ensure the book is saved
-        }
-    }
 
     // Settings
     updateSettingsStats() {
@@ -660,188 +639,8 @@ class BookVault {
         document.getElementById('settings-to-read').textContent = toRead;
     }
 
-    exportData() {
-        const data = {
-            books: this.books,
-            exportDate: new Date().toISOString(),
-            version: '1.0'
-        };
 
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `book-vault-export-${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
 
-    importData(file) {
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const data = JSON.parse(e.target.result);
-                
-                if (data.books && Array.isArray(data.books)) {
-                    if (confirm('This will replace all your current books. Are you sure?')) {
-                        this.books = data.books;
-                        this.saveBooks();
-                        this.updateDashboard();
-                        this.renderBooks();
-                        alert('Books imported successfully!');
-                    }
-                } else {
-                    alert('Invalid file format.');
-                }
-            } catch (error) {
-                alert('Error reading file. Please make sure it\'s a valid JSON file.');
-            }
-        };
-        reader.readAsText(file);
-    }
-
-    // Reading functionality
-    readBook(id) {
-        const book = this.books.find(book => book.id === id);
-        if (!book || !book.pdfFile) {
-            // Show a message in the reading interface instead of alert
-            this.showSection('reading');
-            document.getElementById('book-content').innerHTML = `
-                <div class="book-content">
-                    <h1 class="book-title">${this.escapeHtml(book?.title || 'Book Not Found')}</h1>
-                    <h2 class="book-author">by ${this.escapeHtml(book?.author || 'Unknown Author')}</h2>
-                    <div class="no-pdf-message">
-                        <h3>📚 No PDF Available</h3>
-                        <p>This book doesn't have a PDF file uploaded yet.</p>
-                        <p>Please edit the book to add a PDF file for reading.</p>
-                    </div>
-                </div>
-            `;
-            return;
-        }
-
-        this.currentReadingBook = book;
-        this.startReading();
-        this.showSection('reading');
-        
-        // Update reading interface with real-time tracking
-        document.getElementById('reading-title').textContent = book.title;
-        document.getElementById('reading-author').textContent = `by ${book.author}`;
-        this.updateReadingTimeDisplay();
-        this.updateReadingProgressDisplay();
-        document.getElementById('reading-notes').value = book.notes || '';
-
-        // Load HTML content
-        this.loadHTMLContent(book);
-    }
-
-    loadHTMLContent(book) {
-        const contentContainer = document.getElementById('book-content');
-        
-        if (book.htmlContent) {
-            contentContainer.innerHTML = book.htmlContent;
-        } else {
-            // If no HTML content yet, show loading message
-            contentContainer.innerHTML = `
-                <div class="loading-message">
-                    <h3>Processing PDF content...</h3>
-                    <p>Please wait while we convert the PDF to readable format.</p>
-                    <div class="loading-spinner">⏳</div>
-                </div>
-            `;
-            
-            // Try to convert PDF to HTML if not already done
-            if (book.pdfFile && book.pdfFile.data) {
-                this.convertPDFToHTML(book.pdfFile.data, book);
-            }
-        }
-    }
-
-    startReading() {
-        this.readingStartTime = Date.now();
-        this.readingInterval = setInterval(() => {
-            this.updateReadingTime();
-        }, 1000); // Update every second
-    }
-
-    stopReading() {
-        if (this.readingInterval) {
-            clearInterval(this.readingInterval);
-            this.readingInterval = null;
-        }
-
-        if (this.currentReadingBook && this.readingStartTime) {
-            const sessionTime = Date.now() - this.readingStartTime;
-            this.recordReadingSession(sessionTime);
-        }
-
-        this.readingStartTime = null;
-        this.currentReadingBook = null;
-    }
-
-    updateReadingTime() {
-        if (!this.currentReadingBook || !this.readingStartTime) return;
-
-        const currentSessionTime = Date.now() - this.readingStartTime;
-        const totalTime = this.getTotalReadingTime(this.currentReadingBook) + currentSessionTime;
-        
-        const hours = Math.floor(totalTime / (1000 * 60 * 60));
-        const minutes = Math.floor((totalTime % (1000 * 60 * 60)) / (1000 * 60));
-        
-        const timeString = `${hours}h ${minutes}m`;
-        document.getElementById('reading-time').textContent = `Reading time: ${timeString}`;
-    }
-
-    getTotalReadingTime(book) {
-        if (!book.readingSessions) return 0;
-        return book.readingSessions.reduce((total, session) => total + session.duration, 0);
-    }
-
-    recordReadingSession(duration) {
-        if (!this.currentReadingBook) return;
-
-        if (!this.currentReadingBook.readingSessions) {
-            this.currentReadingBook.readingSessions = [];
-        }
-
-        this.currentReadingBook.readingSessions.push({
-            startTime: this.readingStartTime,
-            endTime: Date.now(),
-            duration: duration
-        });
-
-        // Update total reading time
-        const totalTime = this.getTotalReadingTime(this.currentReadingBook);
-        const hours = Math.floor(totalTime / (1000 * 60 * 60));
-        const minutes = Math.floor((totalTime % (1000 * 60 * 60)) / (1000 * 60));
-        this.currentReadingBook.readingTime = `${hours}h ${minutes}m`;
-
-        this.saveBooks();
-        this.renderBooks();
-    }
-
-    saveReadingNotes() {
-        if (!this.currentReadingBook) return;
-
-        const notes = document.getElementById('reading-notes').value;
-        this.currentReadingBook.notes = notes;
-        this.saveBooks();
-        
-        // Show confirmation
-        const btn = document.getElementById('save-reading-notes');
-        const originalText = btn.textContent;
-        btn.textContent = 'Saved!';
-        btn.style.background = 'var(--success-color)';
-        
-        setTimeout(() => {
-            btn.textContent = originalText;
-            btn.style.background = '';
-        }, 2000);
-    }
 
     // Notes functionality
     updateNotesSection() {
