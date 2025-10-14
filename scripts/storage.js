@@ -44,7 +44,7 @@ class StorageManager {
             title: book.title,
             author: book.author,
             isbn: book.isbn || '',
-            pages: book.contentData ? book.contentData.sections.length : 0,
+            pages: book.pages || 0,
             tag: book.tags ? book.tags.join(', ') : '',
             dateAdded: book.createdAt
         }));
@@ -103,7 +103,7 @@ class StorageManager {
             title: book.title,
             author: book.author,
             isbn: book.isbn || '',
-            pages: book.contentData ? book.contentData.sections.length : 0,
+            pages: book.pages || 0,
             tag: book.tags ? book.tags.join(', ') : '',
             dateAdded: book.createdAt
         }));

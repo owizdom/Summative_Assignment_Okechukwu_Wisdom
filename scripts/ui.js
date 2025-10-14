@@ -282,6 +282,7 @@ class UIManager {
                 <h3>${this.escapeHtml(book.title)}</h3>
                 <div class="author">by ${this.escapeHtml(book.author)}</div>
                 <div class="status ${book.status}">${statusText}</div>
+                ${book.pages ? `<div class="pages">${book.pages} pages</div>` : ''}
                 ${book.rating ? `<div class="rating">${ratingStars}</div>` : ''}
                 ${book.tags.length > 0 ? `<div class="tags">${tagsHtml}</div>` : ''}
                 ${book.notes ? `<div class="notes">${this.escapeHtml(book.notes)}</div>` : ''}
