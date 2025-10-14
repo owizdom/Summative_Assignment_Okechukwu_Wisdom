@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book & Notes Vault</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="./styles/styles.css">
 </head>
 <body>
     <header class="header">
@@ -47,8 +47,9 @@
                     </div>
                     <div class="contact-info">
                         <h3>Contact</h3>
-                        <p>GitHub: <a href="https://github.com/yourusername" target="_blank">github.com/yourusername</a></p>
-                        <p>Email: <a href="mailto:your.email@example.com">your.email@example.com</a></p>
+                        <p>GitHub: <a href="https://github.com/cyuzuzogermain" target="_blank">github.com/cyuzuzogermain
+                        </a></p>
+                        <p>Email: <a href="mailto:c.germain@alustudent.com">c.germain@alustudent.com</a></p>
                     </div>
                 </div>
             </div>
@@ -196,29 +197,6 @@
             </div>
         </section>
 
-        <!-- Notes Section -->
-        <section id="notes" class="section">
-            <div class="container">
-                <h2>Reading Notes</h2>
-                <div class="notes-header">
-                    <div class="notes-filter">
-                        <label for="notes-book-filter">Filter by Book:</label>
-                        <select id="notes-book-filter">
-                            <option value="">All Books with Notes</option>
-                        </select>
-                    </div>
-                    <div class="notes-stats">
-                        <span id="total-notes-count">0 notes</span>
-                    </div>
-                </div>
-                <div id="notes-container" class="notes-container">
-                    <div class="no-notes">
-                        <p>No notes yet. Start reading a book to take notes!</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- Settings Section -->
         <section id="settings" class="section">
             <div class="container">
@@ -272,9 +250,15 @@
     </main>
 
     <footer class="footer">
-        <p>&copy; 2024 Book & Notes Vault. Built with vanilla HTML, CSS, and JavaScript.</p>
+        <p>&copy; Book & Notes Vault.</p>
     </footer>
 
-    <script src="app.js"></script>
+    <!-- Load all modular JavaScript files -->
+    <script src="./scripts/storage.js"></script>
+    <script src="./scripts/state.js"></script>
+    <script src="./scripts/validators.js"></script>
+    <script src="./scripts/search.js"></script>
+    <script src="./scripts/ui.js"></script>
+    <script src="./scripts/app.js"></script>
 </body>
 </html>
