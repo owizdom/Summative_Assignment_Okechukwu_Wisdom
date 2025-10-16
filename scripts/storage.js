@@ -18,7 +18,7 @@ class StorageManager {
 
     // Settings Management
     loadSettings() {
-        const theme = localStorage.getItem(this.themeKey) || 'light';
+        const theme = localStorage.getItem(this.themeKey) || 'notebook';
         const itemsPerPage = localStorage.getItem(this.itemsPerPageKey) || '20';
         
         document.documentElement.setAttribute('data-theme', theme);

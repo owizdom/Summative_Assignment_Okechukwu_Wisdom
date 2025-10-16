@@ -6,37 +6,283 @@
 }
 
 :root {
-    --primary-color: #2563eb;
-    --primary-hover: #1d4ed8;
-    --secondary-color: #64748b;
+    --primary-color: #a67b5b;
+    --primary-hover: #8b6f4f;
+    --secondary-color: #a67b5b;
     --success-color: #10b981;
     --warning-color: #f59e0b;
     --danger-color: #ef4444;
-    --background-color: #ffffff;
-    --surface-color: #f8fafc;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --border-color: #e2e8f0;
-    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --background-color: #fdfaf3;
+    --surface-color: #fdfaf3;
+    --text-primary: #3b3b3b;
+    --text-secondary: #3b3b3b;
+    --border-color: #d6cdbf;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.1);
     --border-radius: 0.5rem;
-    --transition: all 0.2s ease-in-out;
+    --transition: none;
 }
 
-[data-theme="dark"] {
-    --background-color: #0f172a;
-    --surface-color: #1e293b;
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --border-color: #334155;
+[data-theme="dark-notebook"] {
+    --background-color: #2d2a24;
+    --surface-color: #2d2a24;
+    --text-primary: #e8e3d8;
+    --text-secondary: #e8e3d8;
+    --border-color: #4a453c;
+    --primary-color: #c49b6c;
+    --primary-hover: #b88a5a;
+    --secondary-color: #c49b6c;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+/* Notebook theme is now the default, no need for separate definition */
+
+/* Notebook theme is now the default - these styles are in the main body and element styles */
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.6;
     color: var(--text-primary);
     background-color: var(--background-color);
-    transition: var(--transition);
+    background-image: 
+        linear-gradient(to bottom, transparent 0%, transparent 24px, #d6cdbf 24px, #d6cdbf 25px, transparent 25px, transparent 100%);
+    background-size: 100% 25px;
+    background-attachment: local;
+    transition: none;
+}
+
+/* Simple notebook styling for main elements */
+.main {
+    background: transparent;
+}
+
+.container {
+    background: var(--background-color);
+    border-left: 2px solid #c8b7a6;
+    border-right: 2px solid #c8b7a6;
+    margin: 0 auto;
+    box-shadow: var(--shadow);
+}
+
+.book-card {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--primary-color);
+    box-shadow: var(--shadow);
+}
+
+.book-card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.header {
+    background: var(--background-color);
+    border-bottom: 2px solid #c8b7a6;
+    box-shadow: var(--shadow);
+}
+
+.nav-brand h1 {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.stat-card {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--primary-color);
+    box-shadow: var(--shadow);
+}
+
+.stat-number {
+    color: var(--primary-color);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--primary-color);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow);
+}
+
+.search-input {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--primary-color);
+}
+
+.search-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow);
+}
+
+.filter-tab {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.filter-tab:hover,
+.filter-tab.active {
+    background: var(--primary-color);
+    color: #fdfaf3;
+    border-color: var(--primary-hover);
+}
+
+.nav-link {
+    color: var(--text-primary);
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: var(--primary-color);
+    color: #fdfaf3;
+}
+
+.tag {
+    background: var(--primary-color);
+    color: #fdfaf3;
+    border: 1px solid var(--primary-hover);
+}
+
+.pages {
+    color: var(--primary-color);
+    font-weight: 500;
+    font-style: italic;
+}
+
+/* Dark notebook theme specific styles */
+[data-theme="dark-notebook"] body {
+    background-image: 
+        linear-gradient(to bottom, transparent 0%, transparent 24px, #4a453c 24px, #4a453c 25px, transparent 25px, transparent 100%);
+    background-size: 100% 25px;
+    background-attachment: local;
+}
+
+[data-theme="dark-notebook"] .main {
+    background: transparent;
+}
+
+[data-theme="dark-notebook"] .container {
+    background: var(--background-color);
+    border-left: 2px solid #6b6357;
+    border-right: 2px solid #6b6357;
+    margin: 0 auto;
+    box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark-notebook"] .book-card {
+    background: var(--background-color);
+    border: 1px solid #4a453c;
+    border-left: 3px solid #c49b6c;
+    box-shadow: var(--shadow);
+}
+
+[data-theme="dark-notebook"] .book-card:hover {
+    box-shadow: var(--shadow-lg);
+    border-left-color: #b88a5a;
+}
+
+[data-theme="dark-notebook"] .header {
+    background: var(--background-color);
+    border-bottom: 2px solid #6b6357;
+    box-shadow: var(--shadow);
+}
+
+[data-theme="dark-notebook"] .nav-brand h1 {
+    color: #c49b6c;
+    font-weight: 600;
+}
+
+[data-theme="dark-notebook"] .stat-card {
+    background: var(--background-color);
+    border: 1px solid #4a453c;
+    border-left: 3px solid #c49b6c;
+    box-shadow: var(--shadow);
+}
+
+[data-theme="dark-notebook"] .stat-number {
+    color: #c49b6c;
+}
+
+[data-theme="dark-notebook"] .btn-primary {
+    background: #c49b6c;
+    border: 1px solid #b88a5a;
+    box-shadow: var(--shadow);
+}
+
+[data-theme="dark-notebook"] .btn-primary:hover {
+    background: #b88a5a;
+    box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark-notebook"] .form-group input,
+[data-theme="dark-notebook"] .form-group select,
+[data-theme="dark-notebook"] .form-group textarea {
+    background: var(--background-color);
+    border: 1px solid #4a453c;
+    border-left: 3px solid #c49b6c;
+}
+
+[data-theme="dark-notebook"] .form-group input:focus,
+[data-theme="dark-notebook"] .form-group select:focus,
+[data-theme="dark-notebook"] .form-group textarea:focus {
+    border-color: #c49b6c;
+    box-shadow: var(--shadow);
+}
+
+[data-theme="dark-notebook"] .search-input {
+    background: var(--background-color);
+    border: 1px solid #4a453c;
+    border-left: 3px solid #c49b6c;
+}
+
+[data-theme="dark-notebook"] .search-input:focus {
+    border-color: #c49b6c;
+    box-shadow: var(--shadow);
+}
+
+[data-theme="dark-notebook"] .filter-tab {
+    background: var(--background-color);
+    border: 1px solid #4a453c;
+    color: #e8e3d8;
+}
+
+[data-theme="dark-notebook"] .filter-tab:hover,
+[data-theme="dark-notebook"] .filter-tab.active {
+    background: #c49b6c;
+    color: #2d2a24;
+    border-color: #b88a5a;
+}
+
+[data-theme="dark-notebook"] .nav-link {
+    color: #e8e3d8;
+}
+
+[data-theme="dark-notebook"] .nav-link:hover,
+[data-theme="dark-notebook"] .nav-link.active {
+    background: #c49b6c;
+    color: #2d2a24;
+}
+
+[data-theme="dark-notebook"] .tag {
+    background: #c49b6c;
+    color: #2d2a24;
+    border: 1px solid #b88a5a;
+}
+
+[data-theme="dark-notebook"] .pages {
+    color: #c49b6c;
+    font-weight: 500;
+    font-style: italic;
 }
 
 /* Header and Navigation */
@@ -76,7 +322,7 @@ body {
     height: 3px;
     background: var(--text-primary);
     margin: 3px 0;
-    transition: var(--transition);
+    transition: none;
 }
 
 .nav-menu {
@@ -91,7 +337,7 @@ body {
     font-weight: 500;
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius);
-    transition: var(--transition);
+    transition: none;
 }
 
 .nav-link:hover,
@@ -246,13 +492,12 @@ body {
     border-radius: 4px 4px 0 0;
     min-height: 4px;
     position: relative;
-    transition: all 0.3s ease;
+    transition: none;
     cursor: pointer;
 }
 
 .chart-bar:hover {
     background: linear-gradient(to top, var(--primary-hover), var(--primary-color));
-    transform: scaleY(1.05);
 }
 
 .chart-bar-value {
@@ -313,7 +558,7 @@ body {
 .search-input:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow: var(--shadow);
 }
 
 .search-btn {
@@ -324,7 +569,7 @@ body {
     border-radius: var(--border-radius);
     cursor: pointer;
     font-size: 1rem;
-    transition: var(--transition);
+    transition: none;
 }
 
 .search-btn:hover {
@@ -344,7 +589,7 @@ body {
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     cursor: pointer;
-    transition: var(--transition);
+    transition: none;
     color: var(--text-primary);
 }
 
@@ -367,12 +612,11 @@ body {
     border-radius: var(--border-radius);
     padding: 1.5rem;
     box-shadow: var(--shadow);
-    transition: var(--transition);
+    transition: none;
 }
 
 .book-card:hover {
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
+    box-shadow: var(--shadow);
 }
 
 .book-card h3 {
@@ -451,7 +695,7 @@ body {
     cursor: pointer;
     font-size: 0.875rem;
     font-weight: 500;
-    transition: var(--transition);
+    transition: none;
     text-decoration: none;
     display: inline-block;
     text-align: center;
@@ -516,7 +760,7 @@ body {
     font-size: 1rem;
     background: var(--background-color);
     color: var(--text-primary);
-    transition: var(--transition);
+    transition: none;
 }
 
 .form-group input:focus,
@@ -524,7 +768,7 @@ body {
 .form-group textarea:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow: var(--shadow);
 }
 
 .form-actions {
@@ -587,412 +831,20 @@ body {
     margin-top: 3rem;
 }
 
-/* Reading Interface */
-.reading-container {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-.reading-header {
-    background: var(--surface-color);
-    border-bottom: 1px solid var(--border-color);
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.reading-info h2 {
-    margin-bottom: 0.5rem;
-    color: var(--text-primary);
-}
-
-.reading-info p {
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
-}
 
 
-.pdf-viewer-container {
-    flex: 1;
-    padding: 1rem;
-    background: var(--background-color);
-}
-
-/* Book Reader Container */
-.book-reader-container {
-    flex: 1;
-    padding: 2rem;
-    background: var(--background-color);
-    overflow-y: auto;
-}
-
-.book-content-display {
-    max-width: 800px;
-    margin: 0 auto;
-    line-height: 1.8;
-    font-size: 1.1rem;
-}
-
-.book-content .book-title {
-    font-size: 2.5rem;
-    color: var(--text-primary);
-    text-align: center;
-    margin-bottom: 1rem;
-    font-weight: bold;
-    border-bottom: 3px solid var(--primary-color);
-    padding-bottom: 1rem;
-}
-
-.book-content .book-author {
-    font-size: 1.3rem;
-    color: var(--text-secondary);
-    text-align: center;
-    margin-bottom: 3rem;
-    font-style: italic;
-}
-
-.book-content .book-text {
-    text-align: justify;
-}
-
-.book-content .book-paragraph {
-    margin-bottom: 1.5rem;
-    text-indent: 2rem;
-    color: var(--text-primary);
-}
-
-/* Structured Content Styles */
-.book-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    padding-bottom: 2rem;
-    border-bottom: 2px solid var(--border-color);
-}
-
-.book-meta {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-top: 1rem;
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-}
-
-.section-count, .progress {
-    background: var(--surface-color);
-    padding: 0.5rem 1rem;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
-}
-
-.book-sections {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.book-chapter {
-    margin: 3rem 0;
-    padding: 2rem;
-    background: var(--surface-color);
-    border-radius: var(--border-radius);
-    border-left: 4px solid var(--primary-color);
-}
-
-.chapter-title {
-    font-size: 1.5rem;
-    color: var(--primary-color);
-    margin-bottom: 1rem;
-    font-weight: 600;
-}
-
-.book-paragraph {
-    margin: 1.5rem 0;
-    padding: 1rem;
-    background: var(--background-color);
-    border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
-}
-
-.paragraph-text {
-    line-height: 1.8;
-    color: var(--text-primary);
-    margin: 0;
-}
-
-.section-meta {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 0.5rem;
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-}
-
-.word-count {
-    background: var(--surface-color);
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    border: 1px solid var(--border-color);
-}
-
-.loading-message {
-    text-align: center;
-    padding: 3rem;
-    color: var(--text-secondary);
-}
-
-.loading-message h3 {
-    color: var(--primary-color);
-    margin-bottom: 1rem;
-}
-
-.loading-spinner {
-    font-size: 2rem;
-    margin: 1rem 0;
-    animation: spin 2s linear infinite;
-}
-
-.progress-bar {
-    width: 100%;
-    height: 8px;
-    background: var(--border-color);
-    border-radius: 4px;
-    margin: 2rem 0;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--primary-color), var(--success-color));
-    width: 0%;
-    transition: width 0.3s ease;
-    border-radius: 4px;
-}
-
-.processing-content {
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.no-pdf-message {
-    text-align: center;
-    padding: 3rem;
-    color: var(--text-secondary);
-    background: var(--surface-color);
-    border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
-    margin: 2rem 0;
-}
-
-.no-pdf-message h3 {
-    color: var(--warning-color);
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-}
-
-.no-pdf-message p {
-    margin-bottom: 0.5rem;
-    line-height: 1.6;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
 
 
-/* Book Stats */
-.book-stats {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin: 1rem 0;
-    padding: 0.75rem;
-    background: var(--background-color);
-    border-radius: var(--border-radius);
-    border: 1px solid var(--border-color);
-}
 
-.book-status-indicator {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-}
 
-/* Notes Section */
-.notes-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
 
-.notes-filter {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
 
-.notes-filter label {
-    font-weight: 500;
-    color: var(--text-primary);
-}
 
-.notes-filter select {
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    background: var(--background-color);
-    color: var(--text-primary);
-    font-size: 1rem;
-    min-width: 200px;
-}
 
-.notes-stats {
-    color: var(--text-secondary);
-    font-size: 0.875rem;
-}
+/* No spin animation */
 
-.notes-container {
-    display: grid;
-    gap: 1.5rem;
-}
 
-/* Book Notes Group (Dropdown Style) */
-.book-notes-group {
-    background: var(--surface-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-    overflow: hidden;
-}
 
-.book-notes-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem;
-    cursor: pointer;
-    transition: var(--transition);
-    background: var(--background-color);
-    border-bottom: 1px solid var(--border-color);
-}
-
-.book-notes-header:hover {
-    background: var(--surface-color);
-}
-
-.book-info {
-    flex: 1;
-}
-
-.book-info .book-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 0.25rem;
-}
-
-.book-info .book-author {
-    color: var(--text-secondary);
-    font-size: 0.875rem;
-    margin: 0;
-}
-
-.book-notes-meta {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-}
-
-.notes-count {
-    background: var(--primary-color);
-    color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 1rem;
-    font-weight: 500;
-}
-
-.latest-date {
-    font-style: italic;
-}
-
-.toggle-icon {
-    font-size: 1.2rem;
-    transition: var(--transition);
-    color: var(--primary-color);
-}
-
-.book-notes-content {
-    padding: 0 1.5rem 1.5rem 1.5rem;
-    background: var(--surface-color);
-}
-
-.book-notes-content .note-item {
-    background: var(--background-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 1rem;
-    margin-bottom: 1rem;
-    box-shadow: none;
-}
-
-.book-notes-content .note-item:last-child {
-    margin-bottom: 0;
-}
-
-.note-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem;
-}
-
-.note-type {
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.note-type.book-notes {
-    background: #dbeafe;
-    color: #1e40af;
-}
-
-.note-type.reading-notes {
-    background: #d1fae5;
-    color: #065f46;
-}
-
-.note-date {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    background: var(--surface-color);
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-}
-
-.note-content {
-    color: var(--text-primary);
-    line-height: 1.6;
-    white-space: pre-wrap;
-    font-size: 0.9rem;
-}
-
-.no-notes {
-    text-align: center;
-    padding: 3rem;
-    color: var(--text-secondary);
-}
 
 /* File Input Styles */
 .file-input {
@@ -1049,7 +901,7 @@ body {
         padding: 1rem;
         box-shadow: var(--shadow-lg);
         transform: translateY(-100%);
-        transition: var(--transition);
+        transition: none;
     }
 
     .nav-menu.active {
@@ -1126,18 +978,4 @@ body {
     }
 }
 
-/* Animation for smooth transitions */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.section.active {
-    animation: fadeIn 0.3s ease-in-out;
-}
+/* No animations - simple first year student style */

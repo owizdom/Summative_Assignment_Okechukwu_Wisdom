@@ -39,8 +39,6 @@ class BookVault {
         this.updateDashboard();
         this.renderBooks();
     }
-
-    // Public API methods that delegate to appropriate managers
     
     // Book Management
     addBook(bookData) {
