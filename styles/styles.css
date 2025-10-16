@@ -36,9 +36,7 @@
     --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Notebook theme is now the default, no need for separate definition */
-
-/* Notebook theme is now the default - these styles are in the main body and element styles */
+/* Notebook theme is  the default*/
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
