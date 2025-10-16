@@ -24,8 +24,8 @@ A digital library application for cataloging, organizing, and searching your boo
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/owizdom/smallProto.git
-   cd smallProto
+   git clone https://github.com/owizdom/Summative_Assignment_Okechukwu_Wisdom.git
+   cd Summative_Assignment_Okechukwu_Wisdom
    ```
 
 2. **Open in browser**
@@ -72,7 +72,7 @@ smallProto/
 │   ├── ui.js           # UI management
 │   ├── search.js       # Search functionality
 │   └── validators.js   # Data validation
-├── test-books.json     # Sample data for testing
+├── seed.json     # Sample data for testing
 └── README.md           # This file
 ```
 
