@@ -5,6 +5,8 @@ class UIManager {
         this.storageManager = storageManager;
         this.validatorManager = validatorManager;
         this.searchManager = searchManager;
+        this.currentView = 'table'; // Always use table view
+        this.currentSort = { field: 'date', order: 'desc' };
     }
 
     // Event Listeners Setup
@@ -32,12 +34,14 @@ class UIManager {
             this.handleSearch(query);
         });
 
+
         // Filter tabs
         document.querySelectorAll('.filter-tab').forEach(tab => {
             tab.addEventListener('click', (e) => {
                 this.handleFilter(e.target.dataset.filter);
             });
         });
+
 
         // Book form
         document.getElementById('book-form').addEventListener('submit', (e) => {
@@ -85,9 +89,18 @@ class UIManager {
             );
         });
 
-        // Reading functionality
-        document.getElementById('close-reader').addEventListener('click', () => {
-            this.showSection('records');
+        // Table action buttons and sorting (using event delegation)
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('edit-book-btn')) {
+                const bookId = e.target.getAttribute('data-book-id');
+                this.editBook(bookId);
+            } else if (e.target.classList.contains('delete-book-btn')) {
+                const bookId = e.target.getAttribute('data-book-id');
+                this.deleteBook(bookId);
+            } else if (e.target.classList.contains('sortable')) {
+                const field = e.target.getAttribute('data-field');
+                this.handleSort(field);
+            }
         });
 
     }
@@ -247,6 +260,14 @@ class UIManager {
         }
     }
 
+    deleteBook(id) {
+        if (confirm('Are you sure you want to delete this book?')) {
+            this.stateManager.deleteBook(id);
+            this.updateDashboard();
+            this.renderBooks();
+        }
+    }
+
     resetForm() {
         this.stateManager.clearEditingBookId();
         document.getElementById('form-title').textContent = 'Add New Book';
@@ -257,14 +278,20 @@ class UIManager {
     // Rendering
     renderBooks(booksToRender = null) {
         const container = document.getElementById('records-container');
-        const books = booksToRender || this.getFilteredBooks();
+        let books = booksToRender || this.getFilteredBooks();
 
         if (books.length === 0) {
             container.innerHTML = '<div class="no-books"><p>No books found. <a href="#add-form">Add your first book!</a></p></div>';
             return;
         }
 
-        container.innerHTML = books.map(book => this.createBookCard(book)).join('');
+        // Apply sorting if a sort is active
+        if (this.currentSort.field) {
+            books = this.searchManager.sortBooks(books, this.currentSort.field, this.currentSort.order);
+        }
+
+        // Always use table view
+        container.innerHTML = this.createBooksTable(books);
     }
 
     getFilteredBooks() {
@@ -272,26 +299,116 @@ class UIManager {
         return this.stateManager.getBooksByStatus(currentFilter);
     }
 
+    createBooksTable(books) {
+        const searchQuery = document.getElementById('search-input').value;
+        // Use regex and case-insensitive by default
+        const useRegex = true;
+        const caseInsensitive = true;
+        
+        return `
+            <div class="table-container">
+                <table class="books-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-field="title">
+                                Title ${this.getSortIcon('title')}
+                            </th>
+                            <th>Author</th>
+                            <th>Status</th>
+                            <th>Pages</th>
+                            <th class="sortable" data-field="date">
+                                Date Added ${this.getSortIcon('date')}
+                            </th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${books.map(book => this.createTableRow(book, searchQuery, useRegex, caseInsensitive)).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    createTableRow(book, searchQuery, useRegex, caseInsensitive) {
+        const statusText = this.getStatusText(book.status);
+        const tagsHtml = book.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+        
+        // Highlight matches if there's a search query
+        const highlight = (text) => {
+            if (!searchQuery) return this.escapeHtml(text);
+            const highlighted = this.searchManager.highlightMatches(
+                this.escapeHtml(text), 
+                searchQuery, 
+                useRegex, 
+                caseInsensitive
+            );
+            return highlighted;
+        };
+
+        return `
+            <tr>
+                <td class="title-cell">
+                    <div class="book-title">${highlight(book.title)}</div>
+                    ${book.tags.length > 0 ? `<div class="tags">${tagsHtml}</div>` : ''}
+                </td>
+                <td class="author-cell">${highlight(book.author)}</td>
+                <td class="status-cell">
+                    <span class="status ${book.status}">${statusText}</span>
+                </td>
+                <td class="pages-cell">${book.pages || '-'}</td>
+                <td class="date-cell">${this.formatDate(book.createdAt)}</td>
+                <td class="actions-cell">
+                    <button class="btn btn-secondary btn-small edit-book-btn" data-book-id="${this.escapeHtml(book.id)}">Edit</button>
+                    <button class="btn btn-danger btn-small delete-book-btn" data-book-id="${this.escapeHtml(book.id)}">Delete</button>
+                </td>
+            </tr>
+        `;
+    }
+
     createBookCard(book) {
         const statusText = this.getStatusText(book.status);
         const ratingStars = book.rating ? '★'.repeat(book.rating) : '';
         const tagsHtml = book.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+        
+        // Highlight matches if there's a search query
+        const searchQuery = document.getElementById('search-input').value;
+        // Use regex and case-insensitive by default
+        const useRegex = true;
+        const caseInsensitive = true;
+        
+        const highlight = (text) => {
+            if (!searchQuery) return this.escapeHtml(text);
+            const highlighted = this.searchManager.highlightMatches(
+                this.escapeHtml(text), 
+                searchQuery, 
+                useRegex, 
+                caseInsensitive
+            );
+            return highlighted;
+        };
 
         return `
             <div class="book-card">
-                <h3>${this.escapeHtml(book.title)}</h3>
-                <div class="author">by ${this.escapeHtml(book.author)}</div>
+                <h3>${highlight(book.title)}</h3>
+                <div class="author">by ${highlight(book.author)}</div>
                 <div class="status ${book.status}">${statusText}</div>
                 ${book.pages ? `<div class="pages">${book.pages} pages</div>` : ''}
                 ${book.rating ? `<div class="rating">${ratingStars}</div>` : ''}
                 ${book.tags.length > 0 ? `<div class="tags">${tagsHtml}</div>` : ''}
-                ${book.notes ? `<div class="notes">${this.escapeHtml(book.notes)}</div>` : ''}
+                ${book.notes ? `<div class="notes">${highlight(book.notes)}</div>` : ''}
                 <div class="book-actions">
-                    <button class="btn btn-secondary btn-small" onclick="app.editBook('${book.id}')">Edit</button>
-                    <button class="btn btn-danger btn-small" onclick="app.deleteBook('${book.id}')">Delete</button>
+                    <button class="btn btn-secondary btn-small edit-book-btn" data-book-id="${this.escapeHtml(book.id)}">Edit</button>
+                    <button class="btn btn-danger btn-small delete-book-btn" data-book-id="${this.escapeHtml(book.id)}">Delete</button>
                 </div>
             </div>
         `;
+    }
+
+    getSortIcon(field) {
+        if (this.currentSort.field !== field) return '↕';
+        if (this.currentSort.order === null) return '↕';
+        return this.currentSort.order === 'asc' ? '↑' : '↓';
     }
 
     // Settings
@@ -306,13 +423,47 @@ class UIManager {
 
     // Search and Filter Handlers
     handleSearch(query) {
-        const results = this.searchManager.searchBooks(query);
-        this.renderBooks(results);
+        // Use regex and case-insensitive by default
+        const results = this.searchManager.searchBooks(query, { useRegex: true, caseInsensitive: true });
+        const sortedResults = this.currentSort.field ? 
+            this.searchManager.sortBooks(results, this.currentSort.field, this.currentSort.order) : 
+            results;
+        this.renderBooks(sortedResults);
     }
 
     handleFilter(filter) {
         const results = this.searchManager.setFilter(filter);
-        this.renderBooks(results);
+        const sortedResults = this.currentSort.field ? 
+            this.searchManager.sortBooks(results, this.currentSort.field, this.currentSort.order) : 
+            results;
+        this.renderBooks(sortedResults);
+    }
+
+
+    // Sorting
+    handleSort(field) {
+        console.log('Sorting by:', field); // Debug log
+        
+        // If clicking the same field, cycle through: asc -> desc -> unsorted (original)
+        if (this.currentSort.field === field) {
+            if (this.currentSort.order === 'asc') {
+                this.currentSort.order = 'desc';
+            } else if (this.currentSort.order === 'desc') {
+                // Go back to original state (unsorted)
+                this.currentSort = { field: null, order: null };
+            } else {
+                this.currentSort.order = 'asc';
+            }
+        } else {
+            // New field, start with ascending
+            this.currentSort.field = field;
+            this.currentSort.order = 'asc';
+        }
+        
+        console.log('Current sort:', this.currentSort); // Debug log
+        
+        // Re-render with new sort
+        this.renderBooks();
     }
 
     // Utility Functions

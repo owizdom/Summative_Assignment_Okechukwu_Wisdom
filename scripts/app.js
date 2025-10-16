@@ -80,6 +80,12 @@ class BookVault {
         this.uiManager.renderBooks(results);
     }
 
+
+    // Sorting
+    handleSort(field) {
+        this.uiManager.handleSort(field);
+    }
+
     // UI Management
     showSection(sectionId) {
         this.uiManager.showSection(sectionId);

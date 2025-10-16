@@ -6,6 +6,18 @@ class ValidatorManager {
             isbn10: /^\d{9}[\dX]$/,
             isbn13: /^\d{13}$/
         };
+        
+        // Field-specific regex patterns
+        this.fieldPatterns = {
+            // Description/title: forbid leading/trailing spaces and collapse doubles
+            title: /^\S(?:.*\S)?$/,
+            // Numeric field (duration/pages): ^(0|[1-9]\d*)(\.\d{1,2})?$
+            numeric: /^(0|[1-9]\d*)(\.\d{1,2})?$/,
+            // Date (YYYY-MM-DD): ^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$
+            date: /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/,
+            // Category/tag (letters, spaces, hyphens): /^[A-Za-z]+(?:[ -][A-Za-z]+)*$/
+            category: /^[A-Za-z]+(?:[ -][A-Za-z]+)*$/
+        };
     }
 
     // ISBN Validation
@@ -194,12 +206,102 @@ class ValidatorManager {
         };
     }
 
+    // Field-specific validation methods
+    validateTitle(title) {
+        if (!title) return { isValid: false, error: 'Title is required' };
+        
+        // Collapse multiple spaces and trim
+        const normalized = title.replace(/\s+/g, ' ').trim();
+        
+        if (!this.fieldPatterns.title.test(normalized)) {
+            return { 
+                isValid: false, 
+                error: 'Title cannot have leading/trailing spaces or be empty' 
+            };
+        }
+        
+        return { isValid: true, normalized };
+    }
+
+    validateNumericField(value, fieldName = 'Numeric field') {
+        if (!value) return { isValid: true }; // Optional field
+        
+        if (!this.fieldPatterns.numeric.test(value)) {
+            return { 
+                isValid: false, 
+                error: `${fieldName} must be a valid number (e.g., 0, 123, 45.67)` 
+            };
+        }
+        
+        return { isValid: true };
+    }
+
+    validateDateField(dateString) {
+        if (!dateString) return { isValid: true }; // Optional field
+        
+        if (!this.fieldPatterns.date.test(dateString)) {
+            return { 
+                isValid: false, 
+                error: 'Date must be in YYYY-MM-DD format' 
+            };
+        }
+        
+        return { isValid: true };
+    }
+
+    validateCategoryField(category) {
+        if (!category) return { isValid: true }; // Optional field
+        
+        if (!this.fieldPatterns.category.test(category)) {
+            return { 
+                isValid: false, 
+                error: 'Category must contain only letters, spaces, and hyphens' 
+            };
+        }
+        
+        return { isValid: true };
+    }
+
+    // Regex search validation
+    validateRegexPattern(pattern, caseInsensitive = true) {
+        try {
+            const flags = caseInsensitive ? 'gi' : 'g';
+            new RegExp(pattern, flags);
+            return { isValid: true };
+        } catch (error) {
+            return { 
+                isValid: false, 
+                error: `Invalid regex pattern: ${error.message}` 
+            };
+        }
+    }
+
     // Comprehensive Book Validation
     validateBook(bookData, existingBooks = [], excludeId = null) {
         const validation = this.validateBookData(bookData);
         
         if (!validation.isValid) {
             return validation;
+        }
+
+        // Validate title format
+        const titleValidation = this.validateTitle(bookData.title);
+        if (!titleValidation.isValid) {
+            return {
+                isValid: false,
+                errors: [titleValidation.error]
+            };
+        }
+
+        // Validate pages if provided
+        if (bookData.pages) {
+            const pagesValidation = this.validateNumericField(bookData.pages, 'Pages');
+            if (!pagesValidation.isValid) {
+                return {
+                    isValid: false,
+                    errors: [pagesValidation.error]
+                };
+            }
         }
 
         // Check for duplicates

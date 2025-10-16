@@ -8,7 +8,9 @@ class SearchManager {
     }
 
     // Search Books
-    searchBooks(query) {
+    searchBooks(query, options = {}) {
+        const { useRegex = false, caseInsensitive = true } = options;
+        
         // Validate search query
         const validation = this.validatorManager.validateSearchQuery(query);
         if (!validation.isValid) {
@@ -16,7 +18,7 @@ class SearchManager {
             return [];
         }
 
-        const searchTerm = validation.sanitizedQuery.toLowerCase().trim();
+        const searchTerm = validation.sanitizedQuery.trim();
         
         // Add to search history
         this.addToSearchHistory(searchTerm);
@@ -26,19 +28,60 @@ class SearchManager {
         }
 
         const allBooks = this.stateManager.getAllBooks();
-        const filteredBooks = allBooks.filter(book => {
+        
+        if (useRegex) {
+            // Validate regex pattern
+            const regexValidation = this.validatorManager.validateRegexPattern(searchTerm, caseInsensitive);
+            if (!regexValidation.isValid) {
+                console.warn('Invalid regex pattern:', regexValidation.error);
+                return [];
+            }
+            
+            return this.searchWithRegex(allBooks, searchTerm, caseInsensitive);
+        } else {
+            return this.searchWithText(allBooks, searchTerm, caseInsensitive);
+        }
+    }
+
+    searchWithText(books, searchTerm, caseInsensitive) {
+        const term = caseInsensitive ? searchTerm.toLowerCase() : searchTerm;
+        
+        return books.filter(book => {
             const searchableText = [
                 book.title,
                 book.author,
                 book.isbn || '',
                 book.notes || '',
                 ...(book.tags || [])
-            ].join(' ').toLowerCase();
+            ].join(' ');
 
-            return searchableText.includes(searchTerm);
+            const text = caseInsensitive ? searchableText.toLowerCase() : searchableText;
+            return text.includes(term);
         });
+    }
 
-        return filteredBooks;
+    searchWithRegex(books, pattern, caseInsensitive) {
+        const flags = caseInsensitive ? 'gi' : 'g';
+        let regex;
+        
+        try {
+            regex = new RegExp(pattern, flags);
+        } catch (error) {
+            console.warn('Invalid regex pattern:', error.message);
+            return [];
+        }
+
+        return books.filter(book => {
+            const searchableText = [
+                book.title,
+                book.author,
+                book.isbn || '',
+                book.notes || '',
+                ...(book.tags || [])
+            ].join(' ');
+
+            return regex.test(searchableText);
+        });
     }
 
     // Filter Books
@@ -267,6 +310,73 @@ class SearchManager {
             averageTagsPerBook: books.reduce((sum, book) => sum + (book.tags?.length || 0), 0) / books.length,
             booksWithNotes: books.filter(book => book.notes && book.notes.trim()).length
         };
+    }
+
+    // Sorting functionality
+    sortBooks(books, sortBy, sortOrder = 'asc') {
+        const sortedBooks = [...books];
+        
+        sortedBooks.sort((a, b) => {
+            let aValue, bValue;
+            
+            switch (sortBy) {
+                case 'title':
+                    aValue = a.title.toLowerCase();
+                    bValue = b.title.toLowerCase();
+                    break;
+                case 'author':
+                    aValue = a.author.toLowerCase();
+                    bValue = b.author.toLowerCase();
+                    break;
+                case 'date':
+                    aValue = new Date(a.createdAt);
+                    bValue = new Date(b.createdAt);
+                    break;
+                case 'pages':
+                    aValue = parseInt(a.pages) || 0;
+                    bValue = parseInt(b.pages) || 0;
+                    break;
+                case 'rating':
+                    aValue = parseInt(a.rating) || 0;
+                    bValue = parseInt(b.rating) || 0;
+                    break;
+                case 'status':
+                    aValue = a.status;
+                    bValue = b.status;
+                    break;
+                default:
+                    return 0;
+            }
+            
+            if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
+            if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+            return 0;
+        });
+        
+        return sortedBooks;
+    }
+
+    // Highlight search matches
+    highlightMatches(text, pattern, useRegex = false, caseInsensitive = true) {
+        if (!pattern || !text) return text;
+        
+        let regex;
+        
+        if (useRegex) {
+            try {
+                const flags = caseInsensitive ? 'gi' : 'g';
+                regex = new RegExp(pattern, flags);
+            } catch (error) {
+                console.warn('Invalid regex pattern for highlighting:', error.message);
+                return text;
+            }
+        } else {
+            const escapedPattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const flags = caseInsensitive ? 'gi' : 'g';
+            regex = new RegExp(escapedPattern, flags);
+        }
+        
+        return text.replace(regex, '<mark>$&</mark>');
     }
 
     // Initialize search functionality
