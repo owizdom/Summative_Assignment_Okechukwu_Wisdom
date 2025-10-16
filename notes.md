@@ -1,5 +1,0 @@
--we need to implement real time reding and save it so it updates when close and progress as well
--we need to the simplify the code
--we need to make it into folders to keep structure
--implement regex
--autosave localstorage

@@ -34,12 +34,12 @@ A digital library application for cataloging, organizing, and searching your boo
 3. **Start using**
    - Add your first book in the "Add Book" section
    - Use the search functionality to find books
-   - Import test data using the `test-books.json` file
+   - Import test data using the `seed.json` file
 
 ## Testing
 
 ### Test Data
-Import the included `test-books.json` file to test with 21 sample books distributed over 7 days.
+Import the included `seed.json` file to test with 21 sample books distributed over 7 days.
 
 ### Regex Search Examples
 - `^The` - Books starting with "The"
