@@ -129,7 +129,7 @@ class BookVault {
                 this.stateManager.importBooks(importedBooks);
                 this.updateDashboard();
                 this.renderBooks();
-                alert('Books imported successfully from JSON file!');
+                alert(`Books imported successfully! ${importedBooks.length} books added to your library.`);
             },
             (error) => {
                 alert(error);

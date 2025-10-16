@@ -151,7 +151,16 @@ class StateManager {
 
     // Import/Export
     importBooks(importedBooks) {
-        this.books = importedBooks;
+        // Always append imported books to existing books
+        // Generate new IDs to avoid conflicts
+        const importedWithNewIds = importedBooks.map(book => ({
+            ...book,
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        }));
+        
+        this.books = [...this.books, ...importedWithNewIds];
         this.storageManager.saveBooks(this.books);
     }
 

@@ -83,9 +83,10 @@ class StorageManager {
                 const data = JSON.parse(e.target.result);
                 
                 if (data.books && Array.isArray(data.books)) {
-                    if (confirm('This will replace all your current books. Are you sure?')) {
-                        onSuccess(data.books);
-                    }
+                    // Normalize the imported books to ensure they have all required fields
+                    const normalizedBooks = this.normalizeImportedBooks(data.books);
+                    // Show import options dialog
+                    this.showImportOptions(normalizedBooks, onSuccess, onError);
                 } else {
                     onError('Invalid JSON file format.');
                 }
@@ -94,6 +95,42 @@ class StorageManager {
             }
         };
         reader.readAsText(file);
+    }
+
+    normalizeImportedBooks(books) {
+        return books.map(book => {
+            // Handle both simplified export format and full format
+            const normalized = {
+                id: book.id || Date.now().toString() + Math.random().toString(36).substr(2, 9),
+                title: book.title || '',
+                author: book.author || '',
+                isbn: book.isbn || '',
+                pages: book.pages || 0,
+                status: book.status || 'to-read',
+                rating: book.rating || null,
+                tags: book.tags || (book.tag ? book.tag.split(',').map(t => t.trim()) : []),
+                notes: book.notes || '',
+                createdAt: book.createdAt || book.dateAdded || new Date().toISOString(),
+                updatedAt: book.updatedAt || new Date().toISOString()
+            };
+            
+            return normalized;
+        });
+    }
+
+    showImportOptions(importedBooks, onSuccess, onError) {
+        const currentBooks = this.loadBooks();
+        const importedCount = importedBooks.length;
+        const currentCount = currentBooks.length;
+
+        const message = `Found ${importedCount} books to import.\n\n` +
+                       `Current library: ${currentCount} books\n` +
+                       `Importing: ${importedCount} books\n\n` +
+                       `These books will be added to your existing library.`;
+
+        if (confirm(message + '\n\nContinue with import?')) {
+            onSuccess(importedBooks);
+        }
     }
 
     viewJSONData(books) {
