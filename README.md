@@ -4,7 +4,7 @@ A digital library application for cataloging, organizing, and searching your boo
 
 ## Live Demo
 
-**GitHub Pages URL:** https://owizdom.github.io/smallProto
+**GitHub Pages URL:** [Live Website](https://owizdom.github.io/Summative_Assignment_Okechukwu_Wisdom/)
 
 ## Features
 
@@ -98,9 +98,7 @@ smallProto/
 - **7-Day Chart**: Visual representation of book additions
 - **Recent Activity**: Latest book additions and updates
 
-## License
 
-This project is open source and available under the [MIT License](LICENSE).
 
 ## Author
 
@@ -109,4 +107,4 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
-**Live Demo:** https://owizdom.github.io/smallProto
+**Live Demo:** [Live Website](https://owizdom.github.io/Summative_Assignment_Okechukwu_Wisdom/)
