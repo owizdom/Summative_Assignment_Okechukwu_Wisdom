@@ -1,23 +1,23 @@
 # BrainShelf: A Book & Notes Vault
 
-A smart digital library application for cataloging, organizing, and searching your books and notes.
+A digital library application for cataloging, organizing, and searching your books and notes.
 
-## 🌐 Live Demo
+## Live Demo
 
 **GitHub Pages URL:** https://owizdom.github.io/smallProto
 
-## ✨ Features
+## Features
 
-- **📚 Book Management**: Add, edit, and delete books with detailed information
-- **🔍 Advanced Search**: Regex-powered search with case-insensitive matching
-- **📊 Table View**: Sortable table with Title and Date Added columns
-- **📈 Dashboard**: Statistics and 7-day trend chart
-- **🏷️ Tagging System**: Organize books with custom tags
-- **📱 Responsive Design**: Works on desktop and mobile devices
-- **💾 Data Import/Export**: JSON import/export functionality
-- **🎨 Match Highlighting**: Search results highlighted with `<mark>` tags
+- **Book Management**: Add, edit, and delete books with detailed information
+- **Advanced Search**: Regex-powered search with case-insensitive matching
+- **Table View**: Sortable table with Title and Date Added columns
+- **Dashboard**: Statistics and 7-day trend chart
+- **Tagging System**: Organize books with custom tags
+- **Responsive Design**: Works on desktop and mobile devices
+- **Data Import/Export**: JSON import/export functionality
+- **Match Highlighting**: Search results highlighted with `<mark>` tags
 
-## 🚀 Getting Started
+## Getting Started
 
 1. **Clone the repository**
    ```bash
@@ -36,7 +36,7 @@ A smart digital library application for cataloging, organizing, and searching yo
    - Use the search functionality to find books
    - Import test data using the `test-books.json` file
 
-## 🧪 Testing
+## Testing
 
 ### Test Data
 Import the included `test-books.json` file to test with 21 sample books distributed over 7 days.
@@ -47,7 +47,7 @@ Import the included `test-books.json` file to test with 21 sample books distribu
 - `\d{4}` - Books with 4-digit numbers
 - `^[A-Z][a-z]+ [A-Z][a-z]+` - Authors with first and last name
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 - **HTML5** - Semantic markup
 - **CSS3** - Modern styling with CSS Grid and Flexbox
@@ -55,7 +55,7 @@ Import the included `test-books.json` file to test with 21 sample books distribu
 - **Local Storage** - Data persistence
 - **Regex** - Advanced search patterns
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 smallProto/
@@ -73,7 +73,7 @@ smallProto/
 └── README.md           # This file
 ```
 
-## 🎯 Key Features Explained
+## Key Features Explained
 
 ### Three-State Sorting
 - **First click**: Sort ascending (A-Z, oldest-newest)
@@ -90,7 +90,7 @@ smallProto/
 - **Format flexibility** - handles both full and simplified JSON formats
 - **Automatic ID generation** - prevents conflicts
 
-## 📊 Dashboard Features
+## Dashboard Features
 
 - **Total Books**: Count of all books in library
 - **Total Notes**: Count of books with notes
@@ -98,18 +98,11 @@ smallProto/
 - **7-Day Chart**: Visual representation of book additions
 - **Recent Activity**: Latest book additions and updates
 
-## 🔧 Browser Compatibility
-
-- Chrome 60+
-- Firefox 55+
-- Safari 12+
-- Edge 79+
-
-## 📝 License
+## License
 
 This project is open source and available under the [MIT License](LICENSE).
 
-## 👨‍💻 Author
+## Author
 
 **GitHub:** [@owizdom](https://github.com/owizdom)  
 **Email:** w.okechukwu@alustudent.com
